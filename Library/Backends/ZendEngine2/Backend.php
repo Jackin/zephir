@@ -1167,6 +1167,11 @@ class Backend extends BaseBackend
             $methodName = '"' . $methodName . '"';
         }
         if (!isset($symbolVariable)) {
+            if ($methodName == '"__construct"') {
+                $context->codePrinter->output('// Fix call constructor');
+                $methodName = 'Z_OBJCE_P(' . $variable->getName() . ')->constructor->common.function_name';
+            }
+
             $context->codePrinter->output('ZEPHIR_' . $macro . '(NULL, ' . $variable->getName() . ', ' . $methodName . ', ' . $cachePointer . $paramStr . ');');
         } else if ($symbolVariable->getName() == 'return_value') {
             $context->codePrinter->output('ZEPHIR_RETURN_' . $macro . '(' . $variable->getName() . ', ' . $methodName . ', ' . $cachePointer . $paramStr . ');');
