@@ -139,7 +139,7 @@ static PHP_MINFO_FUNCTION(%PROJECT_LOWER%)
 	php_info_print_table_row(2, "Author", PHP_%PROJECT_UPPER%_AUTHOR);
 	php_info_print_table_row(2, "Version", PHP_%PROJECT_UPPER%_VERSION);
 	php_info_print_table_row(2, "Build Date", __DATE__ " " __TIME__ );
-	php_info_print_table_row(2, "Powered by Zephir", "Version " PHP_%PROJECT_UPPER%_ZEPVERSION);
+//	php_info_print_table_row(2, "Powered by Zephir", "Version " PHP_%PROJECT_UPPER%_ZEPVERSION);
 	php_info_print_table_end();
 %EXTENSION_INFO%
 	DISPLAY_INI_ENTRIES();

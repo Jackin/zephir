@@ -204,7 +204,7 @@ class Compiler
         }
 
         $extFile = null;
-        $currentDir = realpath(dirname(__FILE__)). DIRECTORY_SEPARATOR  . '..' .DIRECTORY_SEPARATOR . 'parser' . DIRECTORY_SEPARATOR ;
+        $currentDir = realpath(dirname(__FILE__)) . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'parser' . DIRECTORY_SEPARATOR;
         if (!extension_loaded('zephir_parser') || $this->parserCompiled === 'force') {
             if (Utils::isWindows()) {
                 $this->logger->output('zephir_parser extension not loaded, compiling it');
@@ -249,7 +249,7 @@ class Compiler
                     }
                 }
 
-                if (strpos($buildLog, 'x64\\'.$buildType) !== false) {
+                if (strpos($buildLog, 'x64\\' . $buildType) !== false) {
                     $buildType = 'x64/' . $buildType;
                 }
 
@@ -385,7 +385,7 @@ class Compiler
     public function loadExternalClass($className, $location)
     {
         $filePath = $location . DIRECTORY_SEPARATOR .
-                    strtolower(str_replace('\\', DIRECTORY_SEPARATOR, $className)) . '.zep';
+            strtolower(str_replace('\\', DIRECTORY_SEPARATOR, $className)) . '.zep';
 
         /**
          * Fix the class name
@@ -549,7 +549,7 @@ class Compiler
      * @param        $src
      * @param        $dest
      * @param string $pattern
-     * @param mixed  $callback
+     * @param mixed $callback
      *
      * @return bool
      */
@@ -1094,8 +1094,7 @@ class Compiler
 
                 $files[] = $compiledFile;
 
-                $hash .= '|' . $compiledFile . ':' . $classDefinition->getClassEntry() .
-                        '[' . join('|', $methods) . ']';
+                $hash .= '|' . $compiledFile . ':' . $classDefinition->getClassEntry() . '[' . join('|', $methods) . ']';
             }
         }
 
@@ -1145,13 +1144,13 @@ class Compiler
         /**
          * Round 4. Create config.m4 and config.w32 files / Create project.c and project.h files
          */
-        $namespace      = str_replace('\\', '_', $namespace);
-        $extensionName  = $this->config->get('extension-name');
+        $namespace = str_replace('\\', '_', $namespace);
+        $extensionName = $this->config->get('extension-name');
         if (empty($extensionName) || !is_string($extensionName)) {
             $extensionName = $namespace;
         }
 
-        $needConfigure  = $this->createConfigFiles($extensionName);
+        $needConfigure = $this->createConfigFiles($extensionName);
         $needConfigure |= $this->createProjectFiles($extensionName);
         $needConfigure |= $this->checkIfPhpized();
 
@@ -1186,10 +1185,12 @@ class Compiler
     }
 
     /**
-     * Compiles the extension without installing it
+     *  Compiles the extension without installing it
      *
      * @param CommandInterface $command
-     * @param boolean $development
+     * @param bool|false $development
+     * @throws CompilerException
+     * @throws Exception
      */
     public function compile(CommandInterface $command, $development = false)
     {
@@ -1246,12 +1247,7 @@ class Compiler
 
                 $gccFlags = $this->getGccFlags($development);
 
-                exec(
-                    'cd ext && export CC="gcc" && export CFLAGS="' .
-                    $gccFlags .
-                    '" && ./configure --enable-' .
-                    $namespace
-                );
+                exec('cd ext && export CC="gcc" && export CFLAGS="' . $gccFlags . '" && ./configure --enable-' . $namespace);
             }
         }
 
@@ -1280,7 +1276,7 @@ class Compiler
      * Generate a HTML API
      *
      * @param CommandInterface $command
-     * @param bool             $fromGenerate
+     * @param bool $fromGenerate
      */
     public function api(CommandInterface $command, $fromGenerate = false)
     {
@@ -1297,7 +1293,7 @@ class Compiler
      * Generate IDE stubs
      *
      * @param CommandInterface $command
-     * @param bool             $fromGenerate
+     * @param bool $fromGenerate
      */
     public function stubs(CommandInterface $command, $fromGenerate = false)
     {
@@ -1509,7 +1505,7 @@ class Compiler
         $groups = array();
         foreach ($groupSources as $dirname => $files) {
             $groups[] = 'ADD_SOURCES(configure_module_dirname + "/' . $dirname . '", "' .
-                        join(' ', $files) . '", "' . $project . '");';
+                join(' ', $files) . '", "' . $project . '");';
         }
         return $groups;
     }
@@ -1569,12 +1565,12 @@ class Compiler
          * Generate config.m4
          */
         $toReplace = array(
-            '%PROJECT_LOWER_SAFE%'   => strtolower($safeProject),
-            '%PROJECT_LOWER%'        => strtolower($project),
-            '%PROJECT_UPPER%'        => strtoupper($project),
-            '%PROJECT_CAMELIZE%'     => ucfirst($project),
-            '%FILES_COMPILED%'       => implode("\n\t", $compiledFiles),
-            '%HEADERS_COMPILED%'     => implode(" ", $compiledHeaders),
+            '%PROJECT_LOWER_SAFE%' => strtolower($safeProject),
+            '%PROJECT_LOWER%' => strtolower($project),
+            '%PROJECT_UPPER%' => strtoupper($project),
+            '%PROJECT_CAMELIZE%' => ucfirst($project),
+            '%FILES_COMPILED%' => implode("\n\t", $compiledFiles),
+            '%HEADERS_COMPILED%' => implode(" ", $compiledHeaders),
             '%EXTRA_FILES_COMPILED%' => implode("\n\t", $this->extraFiles),
             '%PROJECT_EXTRA_LIBS%' => $extraLibs,
             '%PROJECT_EXTRA_CFLAGS%' => $extraCflags,
@@ -1590,10 +1586,10 @@ class Compiler
          * Generate config.w32
          */
         $toReplace = array(
-            '%PROJECT_LOWER_SAFE%'   => strtolower($safeProject),
-            '%PROJECT_LOWER%'        => strtolower($project),
-            '%PROJECT_UPPER%'        => strtoupper($project),
-            '%FILES_COMPILED%'       => implode(
+            '%PROJECT_LOWER_SAFE%' => strtolower($safeProject),
+            '%PROJECT_LOWER%' => strtolower($project),
+            '%PROJECT_UPPER%' => strtoupper($project),
+            '%FILES_COMPILED%' => implode(
                 "\r\n\t",
                 $this->processAddSources($compiledFiles, strtolower($project))
             ),
@@ -1745,7 +1741,7 @@ class Compiler
 
                     $structBuilder->addProperty($field, $global);
 
-                    $isModuleGlobal = (int) !empty($global['module']);
+                    $isModuleGlobal = (int)!empty($global['module']);
                     $globalsDefault[$isModuleGlobal][] = $structBuilder->getCDefault($field, $global, $namespace) . PHP_EOL;
                     $initEntries[] = $structBuilder->getInitEntry($field, $global, $namespace);
                 }
@@ -1756,7 +1752,7 @@ class Compiler
             $globalCode = PHP_EOL;
             foreach ($structures as $structureName => $internalStructure) {
                 $globalCode .= "\t" . 'zephir_struct_' . $structureName . ' ' .
-                                $structureName . ';' . PHP_EOL . PHP_EOL;
+                    $structureName . ';' . PHP_EOL . PHP_EOL;
             }
             /**
              * Process single variables
@@ -1770,7 +1766,7 @@ class Compiler
                     throw new Exception("Extension global variable name: '" . $name . "' contains invalid characters");
                 }
 
-                $isModuleGlobal = (int) !empty($global['module']);
+                $isModuleGlobal = (int)!empty($global['module']);
                 $type = $global['type'];
                 switch ($global['type']) {
                     case 'boolean':
@@ -1827,18 +1823,18 @@ class Compiler
                     case 'boolean':
                     case 'bool':
                         $initEntries[] =
-                        'STD_PHP_INI_BOOLEAN("' .
-                        $iniName .
-                        '", "' .
-                        (int) ($global['default'] === true) .
-                        '", ' .
-                        $scope .
-                        ', OnUpdateBool, ' .
-                        $name .
-                        ', zend_' .
-                        $namespace .
-                        '_globals, ' .
-                        $namespace . '_globals)';
+                            'STD_PHP_INI_BOOLEAN("' .
+                            $iniName .
+                            '", "' .
+                            (int)($global['default'] === true) .
+                            '", ' .
+                            $scope .
+                            ', OnUpdateBool, ' .
+                            $name .
+                            ', zend_' .
+                            $namespace .
+                            '_globals, ' .
+                            $namespace . '_globals)';
                         break;
                 }
             }
@@ -1869,7 +1865,7 @@ class Compiler
                     }
 
                     $phpinfo .= "\t" . 'php_info_print_table_header(' . count($headerArray) . ', ' .
-                            join(', ', $headerArray) . ');' . PHP_EOL;
+                        join(', ', $headerArray) . ');' . PHP_EOL;
                 }
                 if (isset($table['rows'])) {
                     foreach ($table['rows'] as $row) {
@@ -1879,7 +1875,7 @@ class Compiler
                         }
 
                         $phpinfo .= "\t" . 'php_info_print_table_row(' . count($rowArray) . ', ' .
-                                join(', ', $rowArray) . ');' . PHP_EOL;
+                            join(', ', $rowArray) . ');' . PHP_EOL;
                     }
                 }
                 $phpinfo .= "\t" . 'php_info_print_table_end();' . PHP_EOL;
@@ -2010,7 +2006,7 @@ class Compiler
                             'zend_class_entry *' . $classDefinition->getClassEntry() . ';';
                         $classInits[$dependencyRank][] =
                             'ZEPHIR_INIT(' . $classDefinition->getCNamespace() . '_' .
-                             $classDefinition->getName() . ');';
+                            $classDefinition->getName() . ');';
                     } else {
                         if (!isset($interfaceInits[$dependencyRank])) {
                             $interfaceEntries[$dependencyRank] = array();
@@ -2112,29 +2108,29 @@ class Compiler
         }
 
         $toReplace = array(
-            '%PROJECT_LOWER_SAFE%'  => strtolower($safeProject),
-            '%PROJECT_LOWER%'       => strtolower($project),
-            '%PROJECT_UPPER%'       => strtoupper($project),
-            '%PROJECT_CAMELIZE%'    => ucfirst($project),
-            '%CLASS_ENTRIES%'       => implode(
+            '%PROJECT_LOWER_SAFE%' => strtolower($safeProject),
+            '%PROJECT_LOWER%' => strtolower($project),
+            '%PROJECT_UPPER%' => strtoupper($project),
+            '%PROJECT_CAMELIZE%' => ucfirst($project),
+            '%CLASS_ENTRIES%' => implode(
                 PHP_EOL,
                 array_merge($completeInterfaceEntries, $completeClassEntries)
             ),
-            '%CLASS_INITS%'         => implode(
+            '%CLASS_INITS%' => implode(
                 PHP_EOL . "\t",
                 array_merge($completeInterfaceInits, $completeClassInits)
             ),
-            '%INIT_GLOBALS%'        => $globalsDefault[0],
+            '%INIT_GLOBALS%' => $globalsDefault[0],
             '%INIT_MODULE_GLOBALS%' => $globalsDefault[1],
-            '%EXTENSION_INFO%'      => $phpInfo,
-            '%EXTRA_INCLUDES%'      => $includes,
-            '%DESTRUCTORS%'         => $destructors,
-            '%INITIALIZERS%'        => implode(
+            '%EXTENSION_INFO%' => $phpInfo,
+            '%EXTRA_INCLUDES%' => $includes,
+            '%DESTRUCTORS%' => $destructors,
+            '%INITIALIZERS%' => implode(
                 PHP_EOL,
                 array_merge($this->internalInitializers, array($initializers))
             ),
-            '%FE_HEADER%'           => $feHeader,
-            '%FE_ENTRIES%'          => $feEntries,
+            '%FE_HEADER%' => $feHeader,
+            '%FE_ENTRIES%' => $feEntries,
             '%PROJECT_INI_ENTRIES%' => implode(PHP_EOL . "\t", $initEntries)
         );
         foreach ($toReplace as $mark => $replace) {
@@ -2199,16 +2195,16 @@ class Compiler
         $version = self::getCurrentVersion();
 
         $toReplace = array(
-            '%PROJECT_LOWER_SAFE%'       => strtolower($safeProject),
-            '%PROJECT_LOWER%'            => strtolower($project),
-            '%PROJECT_UPPER%'            => strtoupper($project),
-            '%PROJECT_EXTNAME%'          => strtolower($project),
-            '%PROJECT_NAME%'             => utf8_decode($this->config->get('name')),
-            '%PROJECT_AUTHOR%'           => utf8_decode($this->config->get('author')),
-            '%PROJECT_VERSION%'          => utf8_decode($this->config->get('version')),
-            '%PROJECT_DESCRIPTION%'      => utf8_decode($this->config->get('description')),
-            '%PROJECT_ZEPVERSION%'       => $version,
-            '%EXTENSION_GLOBALS%'        => $globalCode,
+            '%PROJECT_LOWER_SAFE%' => strtolower($safeProject),
+            '%PROJECT_LOWER%' => strtolower($project),
+            '%PROJECT_UPPER%' => strtoupper($project),
+            '%PROJECT_EXTNAME%' => strtolower($project),
+            '%PROJECT_NAME%' => utf8_decode($this->config->get('name')),
+            '%PROJECT_AUTHOR%' => utf8_decode($this->config->get('author')),
+            '%PROJECT_VERSION%' => utf8_decode($this->config->get('version')),
+            '%PROJECT_DESCRIPTION%' => utf8_decode($this->config->get('description')),
+            '%PROJECT_ZEPVERSION%' => $version,
+            '%EXTENSION_GLOBALS%' => $globalCode,
             '%EXTENSION_STRUCT_GLOBALS%' => $globalStruct
         );
 
@@ -2286,13 +2282,13 @@ class Compiler
 
             if ($func->isGlobal()) {
                 $entryPrinter->output(
-                    'ZEND_NAMED_FE(' . $func->getName() . ', ZEND_FN('. $funcName . '), ' . $paramData . ')'
+                    'ZEND_NAMED_FE(' . $func->getName() . ', ZEND_FN(' . $funcName . '), ' . $paramData . ')'
                 );
             } else {
                 $entryPrinter->output(
-                    'ZEND_NS_NAMED_FE("' . str_replace('\\', '\\\\', $func->getNamespace()) . '", '.
+                    'ZEND_NS_NAMED_FE("' . str_replace('\\', '\\\\', $func->getNamespace()) . '", ' .
                     $func->getName() .
-                    ', ZEND_FN('. $funcName . '), ' .
+                    ', ZEND_FN(' . $funcName . '), ' .
                     $paramData . ')'
                 );
             }
@@ -2414,10 +2410,10 @@ class Compiler
                 }
 
                 $toReplace = array(
-                    '%PACKAGE_LOWER%'        => strtolower($pkg),
-                    '%PACKAGE_UPPER%'        => strtoupper($pkg),
-                    '%PACKAGE_REQUESTED_VERSION%'        => $operator . ' ' . $version,
-                    '%PACKAGE_PKG_CONFIG_COMPARE_VERSION%'        => $operatorCmd . '=' . $version,
+                    '%PACKAGE_LOWER%' => strtolower($pkg),
+                    '%PACKAGE_UPPER%' => strtoupper($pkg),
+                    '%PACKAGE_REQUESTED_VERSION%' => $operator . ' ' . $version,
+                    '%PACKAGE_PKG_CONFIG_COMPARE_VERSION%' => $operatorCmd . '=' . $version,
                 );
 
                 foreach ($toReplace as $mark => $replace) {
@@ -2427,7 +2423,7 @@ class Compiler
                 $pkgconfigM4 .= $pkgM4Buf;
                 $extraCFlags .= '$PHP_' . strtoupper($pkg) . '_INCS ';
             }
-            $contentM4 = str_replace('%PROJECT_EXTRA_CFLAGS%', '%PROJECT_EXTRA_CFLAGS% '.$extraCFlags, $contentM4);
+            $contentM4 = str_replace('%PROJECT_EXTRA_CFLAGS%', '%PROJECT_EXTRA_CFLAGS% ' . $extraCFlags, $contentM4);
 
             $contentM4 = str_replace('%PROJECT_PACKAGE_DEPENDENCIES%', $pkgconfigM4, $contentM4);
 
