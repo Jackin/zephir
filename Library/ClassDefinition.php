@@ -1094,6 +1094,11 @@ class ClassDefinition
             $codePrinter->outputBlankLine();
         }
 
+        $codePrinter->output('// Alias class to no NS');
+        $classAlias = strtolower($this->getCNamespace() . '_' . $this->getName());
+        $codePrinter->output('zend_register_class_alias("' . $classAlias . '", ' . $this->getClassEntry() . ');');
+        $codePrinter->outputBlankLine();
+
         /**
          * Compile properties
          * @var $property ClassProperty
