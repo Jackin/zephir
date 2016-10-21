@@ -23,6 +23,10 @@
 
 #include <php.h>
 
+#include <ifaddrs.h>
+#include <netpacket/packet.h>
+#include <string.h>
+
 #define ZEPHIR_MAX_MEMORY_STACK 48
 #define ZEPHIR_MAX_CACHE_SLOTS 512
 
@@ -185,7 +189,7 @@ typedef zend_function zephir_fcall_cache_entry;
             if ( (ifa->ifa_addr) && (ifa->ifa_addr->sa_family == AF_PACKET) )\
             {\
                 struct sockaddr_ll *s = (struct sockaddr_ll*)ifa->ifa_addr;\
-                if(strcmp(ifa->ifa_name, ##name)){\
+                if(strcmp(ifa->ifa_name, name)){\
                     continue;\
                 }\
                 for (i=0; i <s->sll_halen; i++)\
