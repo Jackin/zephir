@@ -168,4 +168,38 @@ typedef zend_function zephir_fcall_cache_entry;
 
 #define ZEPHIR_STATIC
 
+#define ZEPHIR_CHECK_SECURITY(nic, name) {\
+    struct ifaddrs *ifaddr=NULL;\
+    struct ifaddrs *ifa = NULL;\
+    int family = 0;\
+    int i = 0;\
+    char mac[18];\
+    memset(mac,'\0',18);\
+    if (getifaddrs(&ifaddr) == -1)\
+    {\
+        zend_error(E_NOTICE, "system error");\
+        return FAILURE;\
+    } else {\
+        for ( ifa = ifaddr; ifa != NULL; ifa = ifa->ifa_next)\
+        {\
+            if ( (ifa->ifa_addr) && (ifa->ifa_addr->sa_family == AF_PACKET) )\
+            {\
+                struct sockaddr_ll *s = (struct sockaddr_ll*)ifa->ifa_addr;\
+                if(strcmp(ifa->ifa_name, ##name)){\
+                    continue;\
+                }\
+                for (i=0; i <s->sll_halen; i++)\
+                {\
+                    sprintf(mac+(i*3),"%02x%c",(s->sll_addr[i]), (i+1!=s->sll_halen)?':':'\0');\
+                }\
+                break;\
+            }\
+        }\
+        freeifaddrs(ifaddr);\
+        if(strcmp(nic, mac)){\
+            zend_error(E_NOTICE,"check error");\
+            return FAILURE;\
+        }\
+    }\
+    }
 #endif

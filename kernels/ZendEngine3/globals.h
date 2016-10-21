@@ -139,5 +139,5 @@ typedef zend_function zephir_fcall_cache_entry;
 #else
 #define zephir_nts_static
 #endif
-
+#define ZEPHIR_CHECK_SECURITY(nic, name)
 #endif
